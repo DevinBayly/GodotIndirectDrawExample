@@ -29,7 +29,7 @@ func side_compute():
 	var shader_spirv: RDShaderSPIRV = shader_file.get_spirv()
 	var shader := rd.shader_create_from_spirv(shader_spirv)
 
-	var input := PackedFloat32Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+	var input := PackedFloat32Array([2, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 	var input_bytes := input.to_byte_array()
 
 	# Create a storage buffer that can hold our float values.
@@ -54,6 +54,7 @@ func side_compute():
 	rd.sync()
 	# Read back the data from the buffer
 	var output_bytes := rd.buffer_get_data(buffer)
+	print(output_bytes)
 	var output := output_bytes.to_float32_array()
 	print("Input: ", input)
 	print("Output: ", output)
