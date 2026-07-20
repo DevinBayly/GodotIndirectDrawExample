@@ -23,18 +23,18 @@ var vertex_buffer := RID()
 var vertex_array := RID()
 
 
-func side_compute():
+func side_compute(buffer):
 	var rd = RenderingServer.get_rendering_device();
 	var shader_file := load("res://cshader.glsl")
 	var shader_spirv: RDShaderSPIRV = shader_file.get_spirv()
 	var shader := rd.shader_create_from_spirv(shader_spirv)
-
-	var input := PackedInt32Array([2, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-	var input_bytes := input.to_byte_array()
-
-	# Create a storage buffer that can hold our float values.
-	# Each float has 4 bytes (32 bit) so 10 x 4 = 40 bytes
-	var buffer := rd.storage_buffer_create(input_bytes.size(), input_bytes)
+#
+	#var input := PackedInt32Array([2, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+	#var input_bytes := input.to_byte_array()
+#
+	## Create a storage buffer that can hold our float values.
+	## Each float has 4 bytes (32 bit) so 10 x 4 = 40 bytes
+	#var buffer := rd.storage_buffer_create(input_bytes.size(), input_bytes)
 	# Create a uniform to assign the buffer to the rendering device
 	var uniform := RDUniform.new()
 	uniform.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
@@ -56,21 +56,21 @@ func side_compute():
 	var output_bytes := rd.buffer_get_data(buffer)
 	print(output_bytes)
 	var output := output_bytes.to_int32_array()
-	print("Input: ", input)
+	#print("Input: ", input)
 	print("Output: ", output)
-	rd.free_rid(buffer)
+	#rd.free_rid(buffer)
 
 func _ready() -> void:
 	assert(vertex_shader_file)
 	assert(fragment_shader_file)
-	side_compute()
+	
 	var rs := RenderingServer
 	rd = rs.get_rendering_device()
 	
 	if true: #Indirect args
 		var args := indirect_args_struct(TRIANGLE_VERTICES.size(), instance_count)
 		indirect_args = rd.storage_buffer_create(args.size(), args, RenderingDevice.STORAGE_BUFFER_USAGE_DISPATCH_INDIRECT)
-	
+		side_compute(indirect_args)
 	if true: #Vertex format
 		var attributes := []
 		
