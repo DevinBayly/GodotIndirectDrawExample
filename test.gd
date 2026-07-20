@@ -24,12 +24,12 @@ var vertex_array := RID()
 
 
 func side_compute():
-	var rd = RenderingServer.create_local_rendering_device();
+	var rd = RenderingServer.get_rendering_device();
 	var shader_file := load("res://cshader.glsl")
 	var shader_spirv: RDShaderSPIRV = shader_file.get_spirv()
 	var shader := rd.shader_create_from_spirv(shader_spirv)
 
-	var input := PackedFloat32Array([2, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+	var input := PackedInt32Array([2, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 	var input_bytes := input.to_byte_array()
 
 	# Create a storage buffer that can hold our float values.
@@ -50,12 +50,12 @@ func side_compute():
 	rd.compute_list_dispatch(compute_list, 5, 1, 1)
 	rd.compute_list_end()	
 	# Submit to GPU and wait for sync
-	rd.submit()
-	rd.sync()
+	#rd.submit()
+	#rd.sync()
 	# Read back the data from the buffer
 	var output_bytes := rd.buffer_get_data(buffer)
 	print(output_bytes)
-	var output := output_bytes.to_float32_array()
+	var output := output_bytes.to_int32_array()
 	print("Input: ", input)
 	print("Output: ", output)
 	rd.free_rid(buffer)
