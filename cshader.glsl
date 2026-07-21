@@ -9,6 +9,10 @@ layout(set = 0, binding = 0, std430) restrict buffer MyDataBuffer {
 	int data[];
 }
 my_data_buffer;
+layout(set = 0, binding = 1, std430) buffer MyPosDataBuffer {
+	float data[];
+}
+pos_data;
 
 // The code we want to execute in each invocation
 void main() {

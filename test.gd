@@ -14,16 +14,16 @@ const TRIANGLE_VERTICES: PackedVector3Array = [
 var rd: RenderingDevice = null
 
 var indirect_args := RID()
-
+var pos_buffer:= RID()
 var shader := RID()
 var pipeline := RID()
 
 var vertex_format := 0
 var vertex_buffer := RID()
 var vertex_array := RID()
+var posUniset
 
-
-func side_compute(buffer):
+func side_compute(buffer,pos_buffer):
 	var rd = RenderingServer.get_rendering_device();
 	var shader_file := load("res://cshader.glsl")
 	var shader_spirv: RDShaderSPIRV = shader_file.get_spirv()
@@ -40,8 +40,13 @@ func side_compute(buffer):
 	uniform.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
 	uniform.binding = 0 # this needs to match the "binding" in our shader file
 	uniform.add_id(buffer)
-	var uniform_set := rd.uniform_set_create([uniform], shader, 0) # the last parameter (the 0) needs to match the "set" in our shader file
-	
+	var uniform2 := RDUniform.new()
+	uniform2.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
+	uniform2.binding = 1 # this needs to match the "binding" in our shader file
+	uniform2.add_id(pos_buffer)
+	var uniform_set := rd.uniform_set_create([uniform,uniform2], shader, 0) # the last parameter (the 0) needs to match the "set" in our shader file
+	# make the sencond uniform set
+	print(uniform_set)
 	var pipeline := rd.compute_pipeline_create(shader)
 	var compute_list := rd.compute_list_begin()
 	rd.compute_list_bind_compute_pipeline(compute_list, pipeline)
@@ -70,7 +75,16 @@ func _ready() -> void:
 	if true: #Indirect args
 		var args := indirect_args_struct(TRIANGLE_VERTICES.size(), instance_count)
 		indirect_args = rd.storage_buffer_create(args.size(), args, RenderingDevice.STORAGE_BUFFER_USAGE_DISPATCH_INDIRECT)
-		side_compute(indirect_args)
+		
+		# create the buffer that goes from compute to vertex shader later
+		var position_data = PackedFloat32Array([])
+		position_data.resize(500*3)
+		for i in range(position_data.size()):
+			position_data[i] = randf()
+		var buf = position_data.to_byte_array()
+		pos_buffer = rd.storage_buffer_create(buf.size(),buf)
+		print("pos buf",pos_buffer)
+		side_compute(indirect_args,pos_buffer)
 	if true: #Vertex format
 		var attributes := []
 		
@@ -96,7 +110,13 @@ func _ready() -> void:
 		bundle.bytecode_vertex = vertex_shader_file.get_spirv().bytecode_vertex
 		bundle.bytecode_fragment = fragment_shader_file.get_spirv().bytecode_fragment
 		shader = rd.shader_create_from_spirv(bundle)
-	
+	# uniform set binding
+	var posUni := RDUniform.new()
+	posUni.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
+	posUni.binding =0 # this needs to match the "binding" in our shader file
+	posUni.add_id(pos_buffer)
+	posUniset = rd.uniform_set_create([posUni], shader, 0)
+	print(posUniset)
 	if true: #Pipeline
 		var framebuffer_format := rd.screen_get_framebuffer_format()
 		var primitive := RenderingDevice.RENDER_PRIMITIVE_TRIANGLES
@@ -113,6 +133,8 @@ func _process(delta: float) -> void:
 	var dlist := rd.draw_list_begin_for_screen()
 	rd.draw_list_bind_render_pipeline(dlist, pipeline)
 	rd.draw_list_bind_vertex_array(dlist, vertex_array)
+	rd.draw_list_bind_uniform_set(dlist,posUniset,0)
+
 	rd.draw_list_draw_indirect(dlist, false, indirect_args)
 	rd.draw_list_end()
 
