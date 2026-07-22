@@ -19,4 +19,5 @@ void main() {
 	// gl_GlobalInvocationID.x uniquely identifies this invocation across all work groups
 	//my_data_buffer.data[gl_GlobalInvocationID.x] *= 1;
 	my_data_buffer.data[1]=10;
+	pos_data.data[gl_GlobalInvocationID.x] = -1.0;
 }

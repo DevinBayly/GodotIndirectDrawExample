@@ -57,12 +57,7 @@ func side_compute(buffer,pos_buffer):
 	# Submit to GPU and wait for sync
 	#rd.submit()
 	#rd.sync()
-	# Read back the data from the buffer
-	var output_bytes := rd.buffer_get_data(buffer)
-	print(output_bytes)
-	var output := output_bytes.to_int32_array()
 	#print("Input: ", input)
-	print("Output: ", output)
 	#rd.free_rid(buffer)
 
 func _ready() -> void:
@@ -78,7 +73,7 @@ func _ready() -> void:
 		
 		# create the buffer that goes from compute to vertex shader later
 		var position_data = PackedFloat32Array([])
-		position_data.resize(500*3)
+		position_data.resize(50*3)
 		for i in range(position_data.size()):
 			position_data[i] = randf()
 		var buf = position_data.to_byte_array()
@@ -111,12 +106,19 @@ func _ready() -> void:
 		bundle.bytecode_fragment = fragment_shader_file.get_spirv().bytecode_fragment
 		shader = rd.shader_create_from_spirv(bundle)
 	# uniform set binding
-	var posUni := RDUniform.new()
-	posUni.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
-	posUni.binding =0 # this needs to match the "binding" in our shader file
-	posUni.add_id(pos_buffer)
-	posUniset = rd.uniform_set_create([posUni], shader, 0)
-	print(posUniset)
+	# try making our own position buffer
+	var temp_data = PackedFloat32Array([])
+	temp_data.resize(500*3)
+	for i in range(temp_data.size()):
+		temp_data[i] = randf()
+	var temp_buffer_bytes = temp_data.to_byte_array()
+	var temp_buffer = rd.storage_buffer_create(temp_buffer_bytes.size(),temp_buffer_bytes)
+	#var posUni := RDUniform.new()
+	#posUni.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
+	#posUni.binding =0 # this needs to match the "binding" in our shader file
+	#posUni.add_id(temp_buffer)
+	#posUniset = rd.uniform_set_create([posUni], shader, 0)
+	#print(posUniset)
 	if true: #Pipeline
 		var framebuffer_format := rd.screen_get_framebuffer_format()
 		var primitive := RenderingDevice.RENDER_PRIMITIVE_TRIANGLES
@@ -133,10 +135,15 @@ func _process(delta: float) -> void:
 	var dlist := rd.draw_list_begin_for_screen()
 	rd.draw_list_bind_render_pipeline(dlist, pipeline)
 	rd.draw_list_bind_vertex_array(dlist, vertex_array)
-	rd.draw_list_bind_uniform_set(dlist,posUniset,0)
+	#rd.draw_list_bind_uniform_set(dlist,posUniset,0)
 
 	rd.draw_list_draw_indirect(dlist, false, indirect_args)
 	rd.draw_list_end()
+	var output_bytes := rd.buffer_get_data(pos_buffer)
+	var output := output_bytes.to_float32_array()
+	#print("Input: ", input)
+	print("Output: ", output)
+	pass
 
 func set_instance_count(new_instance_count: int) -> void:
 	instance_count = new_instance_count
