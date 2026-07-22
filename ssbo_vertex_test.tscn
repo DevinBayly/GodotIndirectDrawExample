@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bxr27tgkptf6q"]
+
+[ext_resource type="Script" uid="uid://u8ddseyalxqk" path="res://ssbo_vertex_test.gd" id="1_hsy4q"]
+
+[node name="ssbo_vertex_test" type="Node" unique_id=1026113639]
+script = ExtResource("1_hsy4q")
