@@ -1,8 +1,8 @@
 #[vertex]
 #version 450
-//layout(set = 0, binding = 0,std430)  buffer FloatBuffer {
-//	float data[];
-//} float_buffer;
+layout(set = 0, binding = 0,std430)  buffer FloatBuffer {
+	float data[];
+} float_buffer;
 layout (location = 0) in vec3 Vertex;
 
 void main() {

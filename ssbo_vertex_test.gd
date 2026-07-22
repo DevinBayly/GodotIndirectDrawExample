@@ -92,7 +92,7 @@ func _process(delta: float) -> void:
 	var dlist := rd.draw_list_begin_for_screen()
 	rd.draw_list_bind_render_pipeline(dlist, pipeline)
 	rd.draw_list_bind_vertex_array(dlist, vertex_array)
-	#rd.draw_list_bind_uniform_set(dlist,posUniset,0)
+	rd.draw_list_bind_uniform_set(dlist,posUniset,0)
 
 	rd.draw_list_draw_indirect(dlist, false, indirect_args)
 	rd.draw_list_end()
