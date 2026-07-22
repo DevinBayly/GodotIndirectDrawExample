@@ -4,3 +4,4 @@
 
 [node name="ssbo_vertex_test" type="Node" unique_id=1026113639]
 script = ExtResource("1_hsy4q")
+instance_count = 4
