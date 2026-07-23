@@ -77,4 +77,19 @@ void main() {
 	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = v2.y -.2;
 	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = v2.z;
 	}
+	if (gl_GlobalInvocationID.x ==6) {
+	pos_data.data[gl_GlobalInvocationID.x*3 ] = v3.x;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = v3.y;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = v3.z;
+	}
+	if (gl_GlobalInvocationID.x ==7) {
+	pos_data.data[gl_GlobalInvocationID.x*3 ] = v3.x +.2;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = v3.y +.2;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = v3.z;
+	}
+	if (gl_GlobalInvocationID.x ==8) {
+	pos_data.data[gl_GlobalInvocationID.x*3 ] = v3.x +.2;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = v3.y -.2;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = v3.z;
+	}
 }
