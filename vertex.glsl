@@ -8,5 +8,5 @@ layout (location = 0) in vec3 Vertex;
 void main() {
 	float offset2 = float_buffer.data[gl_InstanceIndex];
 	vec3 offset = vec3(gl_InstanceIndex * 0.2, 0, 0);
-	gl_Position = vec4(vec3(0,offset2/10,0) + Vertex, 1);
+	gl_Position = vec4(offset2 +  Vertex, 1);
 }
