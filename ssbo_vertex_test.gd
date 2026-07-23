@@ -160,9 +160,9 @@ func _process(delta: float) -> void:
 	rd.draw_list_set_push_constant(dlist,push_byte_array,push_byte_array.size())
 	rd.draw_list_draw_indirect(dlist, false, indirect_args)
 	rd.draw_list_end()
-	#var output_bytes := rd.buffer_get_data(pos_buffer)
-	#var output := output_bytes.to_float32_array()
-	#print("Input: ", input)
+	#var output_bytes := rd.buffer_get_data(invocation_buffer)
+	#var output := output_bytes.to_int32_array()
+	##print("Input: ", input)
 	#print("Output: ", output)
 	pass
 

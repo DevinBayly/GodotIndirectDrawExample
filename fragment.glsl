@@ -10,7 +10,7 @@ layout(set = 0, binding = 1,std430)  buffer InvBuffer {
 
 layout (location = 0) out vec4 OutColor;
 
-layout (location =0 ) in flat int vid;
+layout (location =0 ) flat in int vid;
 
 void main() {
 	float red;
@@ -23,5 +23,6 @@ void main() {
 	if (vid == 2) {
 		red =0;
 	}
-	OutColor = vec4(red, sin(push_constants.frame*.05), cos(push_constants.frame*.02), 1);
+	//OutColor = vec4(red, sin(push_constants.frame*.05), cos(push_constants.frame*.02), 1);
+	OutColor = vec4(red,0,0, 1);
 }
