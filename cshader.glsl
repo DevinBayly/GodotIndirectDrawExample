@@ -53,28 +53,37 @@ void main() {
 	pos_data.data[gl_GlobalInvocationID.x + 2] = v1.z;
 	}
 	if (gl_GlobalInvocationID.x ==1) {
-	pos_data.data[gl_GlobalInvocationID.x*3 ] = v1.x +.2;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = v1.y +.2;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = v1.z;
+	// split difference to v2
+	vec3 mid = (v1+v2)/2;
+
+	pos_data.data[gl_GlobalInvocationID.x*3 ] = mid.x ;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = mid.y ;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = mid.z;
 	}
 	if (gl_GlobalInvocationID.x ==2) {
-	pos_data.data[gl_GlobalInvocationID.x*3 ] = v1.x +.2;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = v1.y -.2;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = v1.z;
+	vec3 mid = (v1+v3)/2;
+
+	pos_data.data[gl_GlobalInvocationID.x*3 ] = mid.x ;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = mid.y ;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = mid.z;
 	}
 	if (gl_GlobalInvocationID.x ==3) {
-	pos_data.data[gl_GlobalInvocationID.x*3 ] = v2.x;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = v2.y;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = v2.z;
+	vec3 mid = (v2+v1)/2;
+
+	pos_data.data[gl_GlobalInvocationID.x*3 ] = mid.x;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = mid.y;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = mid.z;
 	}
 	if (gl_GlobalInvocationID.x ==4) {
-	pos_data.data[gl_GlobalInvocationID.x*3 ] = v2.x +.2;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = v2.y +.2;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = v2.z;
+	vec3 mid = (v2+v3)/2;
+
+	pos_data.data[gl_GlobalInvocationID.x*3 ] = mid.x;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = mid.y;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = mid.z;
 	}
 	if (gl_GlobalInvocationID.x ==5) {
-	pos_data.data[gl_GlobalInvocationID.x*3 ] = v2.x +.2;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = v2.y -.2;
+	pos_data.data[gl_GlobalInvocationID.x*3 ] = v2.x;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = v2.y;
 	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = v2.z;
 	}
 	if (gl_GlobalInvocationID.x ==6) {
@@ -83,13 +92,17 @@ void main() {
 	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = v3.z;
 	}
 	if (gl_GlobalInvocationID.x ==7) {
-	pos_data.data[gl_GlobalInvocationID.x*3 ] = v3.x +.2;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = v3.y +.2;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = v3.z;
+	vec3 mid = (v3+v1)/2;
+
+	pos_data.data[gl_GlobalInvocationID.x*3 ] = mid.x;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = mid.y;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = mid.z;
 	}
 	if (gl_GlobalInvocationID.x ==8) {
-	pos_data.data[gl_GlobalInvocationID.x*3 ] = v3.x +.2;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = v3.y -.2;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = v3.z;
+	vec3 mid = (v3 + v2)/2;
+
+	pos_data.data[gl_GlobalInvocationID.x*3 ] = mid.x;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = mid.y;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = mid.z;
 	}
 }
