@@ -16,6 +16,12 @@ layout(set = 0, binding = 1, std430) buffer MyPosDataBuffer {
 	float data[];
 }
 pos_data;
+// this is the buffer we will use to control the individual colors of the triangles
+
+layout(set = 0, binding = 2, std430) buffer InvocationBuffer {
+	int data[];
+}
+inv_data;
 
 // The code we want to execute in each invocation
 void main() {
@@ -90,4 +96,7 @@ void main() {
 	pos_data.data[gl_GlobalInvocationID.x*3 ] = mid.x;
 	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = mid.y;
 	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = mid.z;
+	// update the invocation buffer
+	inv_data.data[gl_GlobalInvocationID.x] = int(gl_GlobalInvocationID.x);
+
 }

@@ -15,6 +15,9 @@ var rd: RenderingDevice = null
 
 var indirect_args := RID()
 var pos_buffer:= RID()
+var invocation_buffer := RID()
+
+
 var shader := RID()
 var pipeline := RID()
 
@@ -27,17 +30,22 @@ var frame =0;
 var push_byte_array;
 
 
+
 func side_compute():
 	var rd = RenderingServer.get_rendering_device();
 	var shader_file := load("res://cshader.glsl")
 	var shader_spirv: RDShaderSPIRV = shader_file.get_spirv()
 	var shader := rd.shader_create_from_spirv(shader_spirv)
-
+	
 	var vertex_bytes := TRIANGLE_VERTICES.to_byte_array()
-#
+	var inv_array = PackedInt32Array()
+	inv_array.resize(500)
+	var inv_array_bytes = inv_array.to_byte_array()
+	
 	## Create a storage buffer that can hold our float values.
 	## Each float has 4 bytes (32 bit) so 10 x 4 = 40 bytes
 	var buffer := rd.storage_buffer_create(vertex_bytes.size(), vertex_bytes)
+	invocation_buffer = rd.storage_buffer_create(inv_array_bytes.size(),inv_array_bytes) 
 	# Create a uniform to assign the buffer to the rendering device
 
 	# send in the first triangle as a small array  
@@ -49,7 +57,11 @@ func side_compute():
 	uniform2.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
 	uniform2.binding = 1 # this needs to match the "binding" in our shader file
 	uniform2.add_id(temp_buffer)
-	var uniform_set := rd.uniform_set_create([uniform,uniform2], shader, 0) # the last parameter (the 0) needs to match the "set" in our shader file
+	var uniform3 := RDUniform.new()
+	uniform3.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
+	uniform3.binding =2
+	uniform3.add_id(invocation_buffer)
+	var uniform_set := rd.uniform_set_create([uniform,uniform2,uniform3], shader, 0) # the last parameter (the 0) needs to match the "set" in our shader file
 	# make the sencond uniform set
 	print(uniform_set)
 	var pipeline := rd.compute_pipeline_create(shader)
@@ -115,7 +127,11 @@ func _ready() -> void:
 	uniform.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
 	uniform.binding =0 # this needs to match the "binding" in our shader file
 	uniform.add_id(temp_buffer)
-	posUniset = rd.uniform_set_create([uniform], shader, 0)
+	var uniform2 := RDUniform.new()
+	uniform2.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
+	uniform2.binding =1
+	uniform2.add_id(invocation_buffer)
+	posUniset = rd.uniform_set_create([uniform,uniform2], shader, 0)
 	print(posUniset)
 	# add push constant so we can have visual update over time
 	push_byte_array = PackedByteArray();
