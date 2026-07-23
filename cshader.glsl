@@ -40,13 +40,26 @@ void main() {
 	my_data_buffer.data[8]
 	);
 
-	//use the x value offset by 3s so that we can store the results in a flat array
-	// try making small triangle centered on the corners of each existing one
-	float side_size = .05;
-	pos_data.data[gl_GlobalInvocationID.x] = gl_GlobalInvocationID.x/10.0;	
+	////use the x value offset by 3s so that we can store the results in a flat array
+	//// try making small triangle centered on the corners of each existing one
+
+	//float side_size = .05;
+	//pos_data.data[gl_GlobalInvocationID.x] = gl_GlobalInvocationID.x/10.0;	
 	
 	// optional to have each invocation write out 9 coordinates so we've basically made 1 new triangle each invocation
-	//pos_data.data[gl_GlobalInvocationID.x*9 ] = v1.x -.2;
-	//pos_data.data[gl_GlobalInvocationID.x*9 + 1] = v1.y -.2;
-	//pos_data.data[gl_GlobalInvocationID.x*9 + 2] = v1.z;
+	if (gl_GlobalInvocationID.x ==0) {
+	pos_data.data[gl_GlobalInvocationID.x ] = v1.x;
+	pos_data.data[gl_GlobalInvocationID.x + 1] = v1.y;
+	pos_data.data[gl_GlobalInvocationID.x + 2] = v1.z;
+	}
+	if (gl_GlobalInvocationID.x ==1) {
+	pos_data.data[gl_GlobalInvocationID.x*3 ] = v1.x +.2;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = v1.y +.2;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = v1.z;
+	}
+	if (gl_GlobalInvocationID.x ==2) {
+	pos_data.data[gl_GlobalInvocationID.x*3 ] = v1.x +.2;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = v1.y -.2;
+	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = v1.z;
+	}
 }
