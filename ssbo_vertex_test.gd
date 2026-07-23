@@ -23,6 +23,8 @@ var vertex_buffer := RID()
 var vertex_array := RID()
 var posUniset
 var temp_buffer
+var frame =0;
+var push_byte_array;
 
 
 func side_compute():
@@ -115,6 +117,10 @@ func _ready() -> void:
 	uniform.add_id(temp_buffer)
 	posUniset = rd.uniform_set_create([uniform], shader, 0)
 	print(posUniset)
+	# add push constant so we can have visual update over time
+	push_byte_array = PackedByteArray();
+	push_byte_array.resize(16)
+	push_byte_array.encode_float(0,frame)
 	if true: #Pipeline
 		var framebuffer_format := rd.screen_get_framebuffer_format()
 		var primitive := RenderingDevice.RENDER_PRIMITIVE_TRIANGLES
@@ -133,7 +139,9 @@ func _process(delta: float) -> void:
 	rd.draw_list_bind_vertex_array(dlist, vertex_array)
 	# set the uniform in the next draw list
 	rd.draw_list_bind_uniform_set(dlist,posUniset,0)
-
+	frame +=1
+	push_byte_array.encode_float(0,frame)
+	rd.draw_list_set_push_constant(dlist,push_byte_array,push_byte_array.size())
 	rd.draw_list_draw_indirect(dlist, false, indirect_args)
 	rd.draw_list_end()
 	#var output_bytes := rd.buffer_get_data(pos_buffer)

@@ -40,6 +40,11 @@ void main() {
 	my_data_buffer.data[8]
 	);
 
+	vec3 points[3];
+	points[0] = v1;
+	points[1] = v2;
+	points[2] = v3;
+
 	////use the x value offset by 3s so that we can store the results in a flat array
 	//// try making small triangle centered on the corners of each existing one
 
@@ -47,9 +52,18 @@ void main() {
 	//pos_data.data[gl_GlobalInvocationID.x] = gl_GlobalInvocationID.x/10.0;	
 	
 	// optional to have each invocation write out 9 coordinates so we've basically made 1 new triangle each invocation
+
+
+	// calculate off of the idx
+	// out corner (so the part of the subdivided triangle)
+	
+	uint ocornerId = gl_GlobalInvocationID.x%3;
+	// in corner
+	int icornerId = int(gl_GlobalInvocationID.x)/3;
+
 	vec3 mid;
-	if (gl_GlobalInvocationID.x ==0) {
-	mid = v1;
+	if (ocornerId ==0) {
+		mid = points[icornerId];
 	}
 	if (gl_GlobalInvocationID.x ==1) {
 	// split difference to v2
@@ -59,20 +73,12 @@ void main() {
 	mid = (v1+v3)/2;
 
 	}
-	if (gl_GlobalInvocationID.x ==3) {
-	mid = (v2+v1)/2;
-
-	}
 	if (gl_GlobalInvocationID.x ==4) {
 	mid = (v2+v3)/2;
 
 	}
 	if (gl_GlobalInvocationID.x ==5) {
-	mid = v2;
-	}
-	if (gl_GlobalInvocationID.x ==6) {
-
-	mid = v3;
+	mid = (v2 +v1)/2;
 	}
 	if (gl_GlobalInvocationID.x ==7) {
 	mid = (v3+v1)/2;
@@ -80,7 +86,6 @@ void main() {
 	}
 	if (gl_GlobalInvocationID.x ==8) {
 	mid = (v3 + v2)/2;
-
 	}
 	pos_data.data[gl_GlobalInvocationID.x*3 ] = mid.x;
 	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = mid.y;
