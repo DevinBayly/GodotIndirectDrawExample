@@ -47,62 +47,42 @@ void main() {
 	//pos_data.data[gl_GlobalInvocationID.x] = gl_GlobalInvocationID.x/10.0;	
 	
 	// optional to have each invocation write out 9 coordinates so we've basically made 1 new triangle each invocation
+	vec3 mid;
 	if (gl_GlobalInvocationID.x ==0) {
-	pos_data.data[gl_GlobalInvocationID.x ] = v1.x;
-	pos_data.data[gl_GlobalInvocationID.x + 1] = v1.y;
-	pos_data.data[gl_GlobalInvocationID.x + 2] = v1.z;
+	mid = v1;
 	}
 	if (gl_GlobalInvocationID.x ==1) {
 	// split difference to v2
-	vec3 mid = (v1+v2)/2;
-
-	pos_data.data[gl_GlobalInvocationID.x*3 ] = mid.x ;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = mid.y ;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = mid.z;
+	mid = (v1+v2)/2;
 	}
 	if (gl_GlobalInvocationID.x ==2) {
-	vec3 mid = (v1+v3)/2;
+	mid = (v1+v3)/2;
 
-	pos_data.data[gl_GlobalInvocationID.x*3 ] = mid.x ;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = mid.y ;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = mid.z;
 	}
 	if (gl_GlobalInvocationID.x ==3) {
-	vec3 mid = (v2+v1)/2;
+	mid = (v2+v1)/2;
 
-	pos_data.data[gl_GlobalInvocationID.x*3 ] = mid.x;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = mid.y;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = mid.z;
 	}
 	if (gl_GlobalInvocationID.x ==4) {
-	vec3 mid = (v2+v3)/2;
+	mid = (v2+v3)/2;
 
-	pos_data.data[gl_GlobalInvocationID.x*3 ] = mid.x;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = mid.y;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = mid.z;
 	}
 	if (gl_GlobalInvocationID.x ==5) {
-	pos_data.data[gl_GlobalInvocationID.x*3 ] = v2.x;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = v2.y;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = v2.z;
+	mid = v2;
 	}
 	if (gl_GlobalInvocationID.x ==6) {
-	pos_data.data[gl_GlobalInvocationID.x*3 ] = v3.x;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = v3.y;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = v3.z;
+
+	mid = v3;
 	}
 	if (gl_GlobalInvocationID.x ==7) {
-	vec3 mid = (v3+v1)/2;
+	mid = (v3+v1)/2;
 
-	pos_data.data[gl_GlobalInvocationID.x*3 ] = mid.x;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = mid.y;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = mid.z;
 	}
 	if (gl_GlobalInvocationID.x ==8) {
-	vec3 mid = (v3 + v2)/2;
+	mid = (v3 + v2)/2;
 
+	}
 	pos_data.data[gl_GlobalInvocationID.x*3 ] = mid.x;
 	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = mid.y;
 	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = mid.z;
-	}
 }
