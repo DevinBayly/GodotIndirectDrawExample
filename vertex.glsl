@@ -10,11 +10,13 @@ layout(set = 0, binding = 0,std430)  buffer FloatBuffer {
 	float data[];
 } float_buffer;
 layout (location = 0) in vec3 Vertex;
-layout (location = 0 ) out float vid;
+layout (location = 0 ) flat out int vid;
+layout (location = 1 ) flat out int iid;
 
 void main() {
 	// ah yes, so the bottom triangle was only created when the vertex index was all zero
-	vid = float(gl_VertexIndex);
+	vid = gl_VertexIndex;
+	iid = gl_InstanceIndex;
 	float offset2 = float_buffer.data[gl_InstanceIndex];
 	float x = float_buffer.data[gl_InstanceIndex*9 +   gl_VertexIndex*3 +0  ];
 	float y = float_buffer.data[gl_InstanceIndex*9 +   gl_VertexIndex*3 +1  ];
