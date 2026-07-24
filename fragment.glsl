@@ -10,19 +10,15 @@ layout(set = 0, binding = 1,std430)  buffer InvBuffer {
 
 layout (location = 0) out vec4 OutColor;
 
-layout (location =0 ) flat in int vid;
+layout (location =0 ) in float vid;
 
 void main() {
-	float red;
-	if (vid ==0) {
-		red = 1.0;
-	} 
-	if (vid == 1) {
-		red = .5;
+	// note we need to set this value because if the conditionals don't line up it still gets a greater than 0 value
+	float red=0;
+	if (vid > 1) {
+		red =1;
 	}
-	if (vid == 2) {
-		red =0;
-	}
+
 	//OutColor = vec4(red, sin(push_constants.frame*.05), cos(push_constants.frame*.02), 1);
-	OutColor = vec4(red,0,0, 1);
+	OutColor = vec4(vid/2.0,1,1, 1);
 }
