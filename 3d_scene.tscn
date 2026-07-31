@@ -1,6 +1,7 @@
-[gd_scene format=3 uid="uid://dyfdwq1km0mo0"]
+[gd_scene format=3 uid="uid://droilphha82ys"]
 
-[ext_resource type="PackedScene" path="res://ssbo_vertex_test.tscn" id="1_35hqx"]
+[ext_resource type="PackedScene" uid="uid://bxr27tgkptf6q" path="res://ssbo_vertex_test.tscn" id="1_35hqx"]
+[ext_resource type="PackedScene" uid="uid://cc1m2a1obsyn4" path="res://addons/fpc/character.tscn" id="2_kk6fc"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_35hqx"]
 
@@ -18,3 +19,7 @@ mesh = SubResource("BoxMesh_35hqx")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=796867851]
 shape = SubResource("WorldBoundaryShape3D_kk6fc")
+
+[node name="Character" parent="." unique_id=228595116 instance=ExtResource("2_kk6fc")]
+
+[editable path="Character"]
