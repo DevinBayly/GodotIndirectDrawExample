@@ -3,7 +3,7 @@ extends Node
 const SIZEOF_VECTOR3 := 4 * 3
 const TRIANGLE_VERTICES: PackedVector3Array = [
 	Vector3( 0.0,  0.5, 0.0),
-	Vector3(-0.5, -0.5, 0.0),
+	Vector3(-0.5, -0.5, 1.0),
 	Vector3( 0.5, -0.5, 0.0)
 ]
 
@@ -29,7 +29,7 @@ var temp_buffer
 var frame =0;
 var push_byte_array;
 
-
+var camera
 
 func side_compute():
 	var rd = RenderingServer.get_rendering_device();
@@ -74,7 +74,7 @@ func side_compute():
 
 func _ready() -> void:
 	
-	
+	camera = $"../Character/Head/Camera"
 	var rs := RenderingServer
 	rd = rs.get_rendering_device()
 	
@@ -133,10 +133,14 @@ func _ready() -> void:
 	uniform2.add_id(invocation_buffer)
 	posUniset = rd.uniform_set_create([uniform,uniform2], shader, 0)
 	print(posUniset)
-	# add push constant so we can have visual update over time
-	push_byte_array = PackedByteArray();
-	push_byte_array.resize(16)
-	push_byte_array.encode_float(0,frame)
+	update_camera()
+	
+
+	#push_byte_array.encode_float(0,frame)
+	
+	# try to make a push constant for the camera
+	#push_byte_array.encode_float()
+	
 	if true: #Pipeline
 		var framebuffer_format := rd.screen_get_framebuffer_format()
 		var primitive := RenderingDevice.RENDER_PRIMITIVE_TRIANGLES
@@ -148,7 +152,13 @@ func _ready() -> void:
 		blend.attachments = [RDPipelineColorBlendStateAttachment.new()]
 		
 		pipeline = rd.render_pipeline_create(shader, framebuffer_format, vertex_format, primitive, rasterization, multisample, depth, blend)
-
+func update_camera():
+	# add push constant so we can have visual update over time
+	var model_transform = Projection(Transform3D())
+	var cam_view = Projection(camera.global_transform.affine_inverse())
+	var camera_projection = camera.get_camera_projection()
+	var combined = camera_projection*cam_view*model_transform
+	push_byte_array = PackedVector4Array([combined.x,combined.y,combined.z,combined.w]).to_byte_array()
 func _process(delta: float) -> void:
 	var dlist := rd.draw_list_begin_for_screen()
 	rd.draw_list_bind_render_pipeline(dlist, pipeline)
@@ -156,7 +166,8 @@ func _process(delta: float) -> void:
 	# set the uniform in the next draw list
 	rd.draw_list_bind_uniform_set(dlist,posUniset,0)
 	frame +=1
-	push_byte_array.encode_float(0,frame)
+	#push_byte_array.encode_float(0,frame)
+	update_camera()
 	rd.draw_list_set_push_constant(dlist,push_byte_array,push_byte_array.size())
 	rd.draw_list_draw_indirect(dlist, false, indirect_args)
 	rd.draw_list_end()
