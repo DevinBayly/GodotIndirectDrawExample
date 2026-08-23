@@ -21,6 +21,6 @@ void main() {
 	//x = sin(push_constants.frame*.01)*.5 + x;
 	vec3 offset = vec3(gl_InstanceIndex * 0.2, 0, 0);
 	//gl_Position = push_constants.cam*vec4(vec3(x,y,z), 1);
-	gl_Position = vec4(vec3(x,y,z), 1);
+	gl_Position = vec4(vec3(Vertex.x,Vertex.y,Vertex.z), 1);
 
 }

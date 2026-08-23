@@ -1,7 +1,7 @@
 extends Node
 
-const SIZEOF_VECTOR3 := 4 * 3
-const TRIANGLE_VERTICES: PackedVector3Array = [
+var SIZEOF_VECTOR3 := 4 * 3
+var TRIANGLE_VERTICES: PackedVector3Array = [
 	Vector3( 0.0,  0.5, 0.0),
 	Vector3(-0.5, -0.5, 1.0),
 	Vector3( 0.5, -0.5, 0.0)
@@ -74,6 +74,25 @@ func side_compute():
 
 func _ready() -> void:
 	
+	# process the json
+	var f = FileAccess.open("meshlets.json",FileAccess.READ)
+	var text = f.get_as_text()
+	var json = JSON.new()
+	var err = json.parse(text)
+	if err:
+		print(err)
+	else:
+		print("ok!")
+		# read the vertex data into the triangles at the top instead of the defaault
+		
+		TRIANGLE_VERTICES.resize(0)
+		for v in json.data["vertex_positions"]:
+			var tempv = Vector3(v[0],v[1],v[2]+1)
+			TRIANGLE_VERTICES.push_back(tempv)
+		SIZEOF_VECTOR3 = 4*3
+		print(TRIANGLE_VERTICES)
+
+
 	var rs := RenderingServer
 	rd = rs.get_rendering_device()
 	
