@@ -74,7 +74,6 @@ func side_compute():
 
 func _ready() -> void:
 	
-	camera = $"../Character/Head/Camera"
 	var rs := RenderingServer
 	rd = rs.get_rendering_device()
 	
@@ -133,7 +132,6 @@ func _ready() -> void:
 	uniform2.add_id(invocation_buffer)
 	posUniset = rd.uniform_set_create([uniform,uniform2], shader, 0)
 	print(posUniset)
-	update_camera()
 	
 
 	#push_byte_array.encode_float(0,frame)
@@ -152,13 +150,13 @@ func _ready() -> void:
 		blend.attachments = [RDPipelineColorBlendStateAttachment.new()]
 		
 		pipeline = rd.render_pipeline_create(shader, framebuffer_format, vertex_format, primitive, rasterization, multisample, depth, blend)
-func update_camera():
-	# add push constant so we can have visual update over time
-	var model_transform = Projection(Transform3D())
-	var cam_view = Projection(camera.global_transform.affine_inverse())
-	var camera_projection = camera.get_camera_projection()
-	var combined = camera_projection*cam_view*model_transform
-	push_byte_array = PackedVector4Array([combined.x,combined.y,combined.z,combined.w]).to_byte_array()
+# func update_camera():
+# 	# add push constant so we can have visual update over time
+# 	var model_transform = Projection(Transform3D())
+# 	var cam_view = Projection(camera.global_transform.affine_inverse())
+# 	var camera_projection = camera.get_camera_projection()
+# 	var combined = camera_projection*cam_view*model_transform
+# 	push_byte_array = PackedVector4Array([combined.x,combined.y,combined.z,combined.w]).to_byte_array()
 func _process(delta: float) -> void:
 	var dlist := rd.draw_list_begin_for_screen()
 	rd.draw_list_bind_render_pipeline(dlist, pipeline)
@@ -167,8 +165,7 @@ func _process(delta: float) -> void:
 	rd.draw_list_bind_uniform_set(dlist,posUniset,0)
 	frame +=1
 	#push_byte_array.encode_float(0,frame)
-	update_camera()
-	rd.draw_list_set_push_constant(dlist,push_byte_array,push_byte_array.size())
+	#rd.draw_list_set_push_constant(dlist,push_byte_array,push_byte_array.size())
 	rd.draw_list_draw_indirect(dlist, false, indirect_args)
 	rd.draw_list_end()
 	#var output_bytes := rd.buffer_get_data(invocation_buffer)

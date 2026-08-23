@@ -1,8 +1,5 @@
 #[fragment]
 #version 450
-layout(push_constant) uniform PushConstants {
-	mat4 cam;
-} push_constants;
 
 layout(set = 0, binding = 1,std430)  buffer InvBuffer {
 	int data[];
