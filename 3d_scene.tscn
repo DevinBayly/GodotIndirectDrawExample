@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://droilphha82ys"]
+[gd_scene format=3 uid="uid://dyfdwq1km0mo0"]
 
-[ext_resource type="PackedScene" uid="uid://bxr27tgkptf6q" path="res://ssbo_vertex_test.tscn" id="1_35hqx"]
+[ext_resource type="PackedScene" uid="uid://bif3706t78gm0" path="res://ssbo_vertex_test.tscn" id="1_35hqx"]
 [ext_resource type="PackedScene" uid="uid://cc1m2a1obsyn4" path="res://addons/fpc/character.tscn" id="2_kk6fc"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_35hqx"]

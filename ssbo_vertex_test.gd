@@ -189,9 +189,9 @@ func _ready() -> void:
 	var meshinduniform = RDUniform.new()
 	meshinduniform.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
 	meshinduniform.binding = 4
+	meshinduniform.add_id(meshlet_indices_buffer)
 	#posUniset = rd.uniform_set_create([uniform,uniform2], shader, 0)
-	posUniset = rd.uniform_set_create([uniform,uniform2,jvertuniform,jinduniform],shader,0)
-	#posUniset = rd.uniform_set_create([uniform,uniform2,jvertuniform,jinduniform,meshinduniform], shader, 0)
+	posUniset = rd.uniform_set_create([uniform,uniform2,jvertuniform,jinduniform,meshinduniform],shader,0)
 	print(posUniset)
 	update_camera()
 	

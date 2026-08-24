@@ -15,19 +15,21 @@ layout(set = 0, binding = 2,std430)  buffer VertBuffer {
 layout(set = 0, binding = 3,std430)  buffer IndBuffer {
 	int data[];
 } jindbuffer;
-//layout(set = 0, binding = 4,std430)  buffer MeshletBuffer {
-//	int data[];
-//} meshindbuffer;
+layout(set = 0, binding = 4,std430)  buffer MeshletBuffer {
+	int data[];
+} meshindbuffer;
 layout (location = 0) in vec3 Vertex;
 layout (location = 0 ) flat out int vid;
 layout (location = 1 ) flat out int iid;
-//layout (location = 2 ) flat out int pid;
+layout (location = 2 ) flat out int mid;
 
 void main() {
 	// ah yes, so the bottom triangle was only created when the vertex index was all zero
 	vid = gl_VertexIndex;
 	iid = gl_InstanceIndex;
 	//pid = gl_PrimitiveID;
+	mid = meshindbuffer.data[iid];
+	
 
 	// for testing use the frame push constant to give a rotation of our cube
 
