@@ -6,6 +6,15 @@ var TRIANGLE_VERTICES: PackedVector3Array = [
 	Vector3(-0.5, -0.5, 1.0),
 	Vector3( 0.5, -0.5, 0.0)
 ]
+# make a new list for the vertices we will pretend we got from compute shader
+# also include the index buffer for re-using the index values
+var json_vertices: PackedVector3Array = []
+var json_indices: PackedInt32Array = []
+var meshlet_indices: PackedInt32Array =[]
+# now make the buffer rid's for each of them
+var json_vertices_buffer = RID()
+var json_indices_buffer = RID()
+var meshlet_indices_buffer= RID()
 
 @export var vertex_shader_file: RDShaderFile = null
 @export var fragment_shader_file: RDShaderFile = null
@@ -73,6 +82,8 @@ func side_compute():
 	rd.compute_list_end()	
 
 func _ready() -> void:
+	var rs := RenderingServer
+	rd = rs.get_rendering_device()
 	
 	# process the json
 	var f = FileAccess.open("meshlets.json",FileAccess.READ)
@@ -85,16 +96,29 @@ func _ready() -> void:
 		print("ok!")
 		# read the vertex data into the triangles at the top instead of the defaault
 		
-		TRIANGLE_VERTICES.resize(0)
+		#TRIANGLE_VERTICES.resize(0)
 		for v in json.data["vertex_positions"]:
 			var tempv = Vector3(v[0],v[1],v[2]+1)
-			TRIANGLE_VERTICES.push_back(tempv)
-		SIZEOF_VECTOR3 = 4*3
-		print(TRIANGLE_VERTICES)
+			json_vertices.push_back(tempv)
+		for m in json.data["meshlets"]:
+			var m_ind = m["index"]
+			# so it's sort of nested because the meshlet has both a triangle id and a vertex vertex_
+			# vertices map back to the above list, triangles map into the index of the meshlet vertex list
+			var m_vs = m["vertices"]
+			var m_tris = m["triangles"]
+			for t in m_tris:
+				for tv_ind in t:
+					json_indices.push_back(m_vs[tv_ind])
+				meshlet_indices.push_back(m_ind)
+		print(json_vertices)
+		print(json_indices)
+		print(meshlet_indices)
+	# make the buffers for the json/meshlet data
+	json_vertices_buffer =  rd.storage_buffer_create(json_vertices.to_byte_array().size(),json_vertices.to_byte_array())
+	json_indices_buffer = rd.storage_buffer_create(json_indices.to_byte_array().size(),json_indices.to_byte_array())
+	meshlet_indices_buffer= rd.storage_buffer_create(meshlet_indices.to_byte_array().size(),meshlet_indices.to_byte_array())
 
-
-	var rs := RenderingServer
-	rd = rs.get_rendering_device()
+	
 	
 	var temp_data = PackedFloat32Array([])
 	temp_data.resize(500*3)
@@ -105,6 +129,7 @@ func _ready() -> void:
 	
 	# setup compute shader to put new positions in buffer shared with vertex shader
 	side_compute()
+	
 	if true: #Indirect args
 		var args := indirect_args_struct(TRIANGLE_VERTICES.size(), instance_count)
 		indirect_args = rd.storage_buffer_create(args.size(), args, RenderingDevice.STORAGE_BUFFER_USAGE_DISPATCH_INDIRECT)
@@ -149,7 +174,22 @@ func _ready() -> void:
 	uniform2.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
 	uniform2.binding =1
 	uniform2.add_id(invocation_buffer)
-	posUniset = rd.uniform_set_create([uniform,uniform2], shader, 0)
+	
+	# here we will add in the json/meshlet data as uniforms
+	var jvertuniform = RDUniform.new()
+	jvertuniform.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
+	jvertuniform.binding = 2
+	jvertuniform.add_id(json_vertices_buffer)
+	var jinduniform = RDUniform.new()
+	jinduniform.uniform_type= RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
+	jinduniform.binding = 3
+	jinduniform.add_id(json_indices_buffer)
+	var meshinduniform = RDUniform.new()
+	meshinduniform.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
+	meshinduniform.binding = 4
+	#posUniset = rd.uniform_set_create([uniform,uniform2], shader, 0)
+	posUniset = rd.uniform_set_create([uniform,uniform2,jvertuniform,jinduniform],shader,0)
+	#posUniset = rd.uniform_set_create([uniform,uniform2,jvertuniform,jinduniform,meshinduniform], shader, 0)
 	print(posUniset)
 	
 
