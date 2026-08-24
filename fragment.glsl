@@ -19,5 +19,5 @@ void main() {
 	}
 
 	//OutColor = vec4(red, sin(push_constants.frame*.05), cos(push_constants.frame*.02), 1);
-	OutColor = vec4(float(compute_value)/2.0,1,1, 1);
+	OutColor = vec4(float(iid)/12.0,1,1, 1);
 }

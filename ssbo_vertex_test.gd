@@ -36,7 +36,7 @@ var vertex_array := RID()
 var posUniset
 var temp_buffer
 var frame =0;
-var push_byte_array;
+var push_byte_array:PackedByteArray=[];
 
 var camera
 
@@ -191,7 +191,9 @@ func _ready() -> void:
 	posUniset = rd.uniform_set_create([uniform,uniform2,jvertuniform,jinduniform],shader,0)
 	#posUniset = rd.uniform_set_create([uniform,uniform2,jvertuniform,jinduniform,meshinduniform], shader, 0)
 	print(posUniset)
-	
+
+	# set the push constant array to be the right size for single float
+	push_byte_array.resize(16)	
 
 	#push_byte_array.encode_float(0,frame)
 	
@@ -223,8 +225,8 @@ func _process(delta: float) -> void:
 	# set the uniform in the next draw list
 	rd.draw_list_bind_uniform_set(dlist,posUniset,0)
 	frame +=1
-	#push_byte_array.encode_float(0,frame)
-	#rd.draw_list_set_push_constant(dlist,push_byte_array,push_byte_array.size())
+	push_byte_array.encode_float(0,frame)
+	rd.draw_list_set_push_constant(dlist,push_byte_array,push_byte_array.size())
 	rd.draw_list_draw_indirect(dlist, false, indirect_args)
 	rd.draw_list_end()
 	#var output_bytes := rd.buffer_get_data(invocation_buffer)
