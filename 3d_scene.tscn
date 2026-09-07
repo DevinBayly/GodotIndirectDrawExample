@@ -3,17 +3,12 @@
 [ext_resource type="PackedScene" uid="uid://bif3706t78gm0" path="res://ssbo_vertex_test.tscn" id="1_35hqx"]
 [ext_resource type="PackedScene" uid="uid://cc1m2a1obsyn4" path="res://addons/fpc/character.tscn" id="2_kk6fc"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_35hqx"]
-
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_kk6fc"]
 
 [node name="Node3D" type="Node3D" unique_id=2072307825]
 
 [node name="ssbo_vertex_test" parent="." unique_id=1026113639 instance=ExtResource("1_35hqx")]
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=593251354]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
-mesh = SubResource("BoxMesh_35hqx")
+instance_count = 16
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1064278320]
 
@@ -21,5 +16,6 @@ mesh = SubResource("BoxMesh_35hqx")
 shape = SubResource("WorldBoundaryShape3D_kk6fc")
 
 [node name="Character" parent="." unique_id=228595116 instance=ExtResource("2_kk6fc")]
+invert_camera_y_axis = true
 
 [editable path="Character"]

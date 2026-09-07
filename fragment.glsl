@@ -19,5 +19,11 @@ void main() {
 	// note we need to set this value because if the conditionals don't line up it still gets a greater than 0 value
 
 	//OutColor = vec4(red, sin(push_constants.frame*.05), cos(push_constants.frame*.02), 1);
-	OutColor = vec4(float(mid)/4.0,1,1, 1);
+	vec3 outColor = vec3(1,0,0);
+	if (mid ==1) {
+		outColor = vec3(0,1,0);
+	} else if (mid ==2) {
+		outColor = vec3(0,0,1);
+	}
+	OutColor = vec4(outColor, 1);
 }

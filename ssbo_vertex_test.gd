@@ -206,14 +206,19 @@ func _ready() -> void:
 		var primitive := RenderingDevice.RENDER_PRIMITIVE_TRIANGLES
 		
 		var rasterization := RDPipelineRasterizationState.new()
+		rasterization.cull_mode = RenderingDevice.POLYGON_CULL_BACK
+		rasterization.front_face = RenderingDevice.POLYGON_FRONT_FACE_COUNTER_CLOCKWISE # or CLOCKWISE depending on your index buffer
 		var multisample := RDPipelineMultisampleState.new()
 		var depth := RDPipelineDepthStencilState.new()
+		depth.enable_depth_test = true
+		depth.enable_depth_write = true
+		depth.depth_compare_operator = RenderingDevice.COMPARE_OP_LESS
 		var blend := RDPipelineColorBlendState.new()
 		blend.attachments = [RDPipelineColorBlendStateAttachment.new()]
 		
 		pipeline = rd.render_pipeline_create(shader, framebuffer_format, vertex_format, primitive, rasterization, multisample, depth, blend)
 func update_camera():
-	# add push constant so we can have visual update over time
+	# add push constant so we can have visual update over timed
 	var model_transform = Projection(Transform3D())
 	var cam_view = Projection(camera.global_transform.affine_inverse())
 	var camera_projection = camera.get_camera_projection()
