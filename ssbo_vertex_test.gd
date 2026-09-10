@@ -16,6 +16,7 @@ var json_vertices_buffer = RID()
 var json_indices_buffer = RID()
 var meshlet_indices_buffer= RID()
 
+@export var camera :Camera3D = null
 @export var vertex_shader_file: RDShaderFile = null
 @export var fragment_shader_file: RDShaderFile = null
 @export var instance_count := 1 : set = set_instance_count
@@ -38,7 +39,6 @@ var temp_buffer
 var frame =0;
 var push_byte_array:PackedByteArray=[];
 
-var camera
 
 func side_compute():
 	var rd = RenderingServer.get_rendering_device();
@@ -48,7 +48,7 @@ func side_compute():
 	
 	var vertex_bytes := TRIANGLE_VERTICES.to_byte_array()
 	var inv_array = PackedInt32Array()
-	inv_array.resize(500)
+	inv_array.resize(instance_count*3)
 	var inv_array_bytes = inv_array.to_byte_array()
 	
 	## Create a storage buffer that can hold our float values.
@@ -83,7 +83,6 @@ func side_compute():
 
 func _ready() -> void:
 	
-	camera = $"../Character/Head/Camera"
 	var rs := RenderingServer
 	rd = rs.get_rendering_device()
 	
@@ -112,9 +111,9 @@ func _ready() -> void:
 				for tv_ind in t:
 					json_indices.push_back(m_vs[tv_ind])
 				meshlet_indices.push_back(m_ind)
-		print(json_vertices)
-		print(json_indices)
-		print(meshlet_indices)
+		#print(json_vertices)
+		#print(json_indices)
+		#print(meshlet_indices)
 	# make the buffers for the json/meshlet data
 	json_vertices_buffer =  rd.storage_buffer_create(json_vertices.to_byte_array().size(),json_vertices.to_byte_array())
 	json_indices_buffer = rd.storage_buffer_create(json_indices.to_byte_array().size(),json_indices.to_byte_array())
@@ -207,7 +206,7 @@ func _ready() -> void:
 		
 		var rasterization := RDPipelineRasterizationState.new()
 		rasterization.cull_mode = RenderingDevice.POLYGON_CULL_BACK
-		rasterization.front_face = RenderingDevice.POLYGON_FRONT_FACE_COUNTER_CLOCKWISE # or CLOCKWISE depending on your index buffer
+		rasterization.front_face = RenderingDevice.POLYGON_FRONT_FACE_CLOCKWISE # or CLOCKWISE depending on your index buffer
 		var multisample := RDPipelineMultisampleState.new()
 		var depth := RDPipelineDepthStencilState.new()
 		depth.enable_depth_test = true
