@@ -51,6 +51,31 @@ func side_compute():
 	inv_array.resize(instance_count*3)
 	var inv_array_bytes = inv_array.to_byte_array()
 	
+	# test out making an array of structs to pass to the shader
+	var stream = StreamPeerBuffer.new()
+	stream.big_endian = false
+	# could be something like fov, but I guess that's often in the matrix when it's turned into a matrix
+	stream.put_float(5.0)
+	stream.put_32(1)
+	stream.put_32(2)
+	# spare alignment bytes
+	stream.put_float(0.0)
+	# camera data
+	var model_transform = Projection(Transform3D())
+	var cam_view = Projection(camera.global_transform.affine_inverse())
+	var camera_projection = camera.get_camera_projection()
+	var combined = camera_projection*cam_view*model_transform
+	# then iterate over and put the float values into stream
+	print(combined)
+	for i in range(4):
+		for j in range(4):
+			var mat_cell = combined[i][j]
+			stream.put_float(mat_cell)
+			print(mat_cell)
+	var streamByteArray = stream.data_array
+	var arrayOfStructBuffer = rd.storage_buffer_create(streamByteArray.size(),streamByteArray)
+	
+	
 	## Create a storage buffer that can hold our float values.
 	## Each float has 4 bytes (32 bit) so 10 x 4 = 40 bytes
 	var buffer := rd.storage_buffer_create(vertex_bytes.size(), vertex_bytes)
@@ -70,9 +95,13 @@ func side_compute():
 	uniform3.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
 	uniform3.binding =2
 	uniform3.add_id(invocation_buffer)
-	var uniform_set := rd.uniform_set_create([uniform,uniform2,uniform3], shader, 0) # the last parameter (the 0) needs to match the "set" in our shader file
+	var uniform4 := RDUniform.new()
+	uniform4.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
+	uniform4.binding =3
+	uniform4.add_id(arrayOfStructBuffer)
+	var uniform_set := rd.uniform_set_create([uniform,uniform2,uniform3,uniform4], shader, 0) # the last parameter (the 0) needs to match the "set" in our shader file
 	# make the sencond uniform set
-	print(uniform_set)
+	#print(uniform_set)
 	var pipeline := rd.compute_pipeline_create(shader)
 	var compute_list := rd.compute_list_begin()
 	rd.compute_list_bind_compute_pipeline(compute_list, pipeline)
@@ -191,7 +220,7 @@ func _ready() -> void:
 	meshinduniform.add_id(meshlet_indices_buffer)
 	#posUniset = rd.uniform_set_create([uniform,uniform2], shader, 0)
 	posUniset = rd.uniform_set_create([uniform,uniform2,jvertuniform,jinduniform,meshinduniform],shader,0)
-	print(posUniset)
+	#print(posUniset)
 	update_camera()
 	
 

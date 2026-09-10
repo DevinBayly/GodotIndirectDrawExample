@@ -23,80 +23,31 @@ layout(set = 0, binding = 2, std430) buffer InvocationBuffer {
 }
 inv_data;
 
+// bring in meshlet data somehow, include a specific vec3 holding the centroid that we will perform the camera operation on 
+
+struct CamDetails {
+    float my_float;
+    int my_int1;
+    int my_int2;
+    float _pad; 
+    mat4 camera_mat;
+};
+
+layout(set = 0, binding = 3, std430) buffer CameraBuffer {
+	CamDetails data[];
+} cam_data;
+
+
+
 // The code we want to execute in each invocation
 void main() {
 	// gl_GlobalInvocationID.x uniquely identifies this invocation across all work groups
 	//my_data_buffer.data[gl_GlobalInvocationID.x] *= 1;
 
+	// multiply centroid vec3 by cam mat which has the whole model, cam,view  process baked into it, and check whether the position is outside of 0-1 or the final range which constitutes "inside" the region the camera should be able to see 
 
-	// use the float buffer at binding 1 to make a collection of 3 vertices
-	vec3 v1 = vec3(
-	my_data_buffer.data[0],
-	my_data_buffer.data[1],
-	my_data_buffer.data[2]
-	);
-	vec3 v2 = vec3(
-	my_data_buffer.data[3],
-	my_data_buffer.data[4],
-	my_data_buffer.data[5]
-	);
-	vec3 v3 = vec3(
-	my_data_buffer.data[6],
-	my_data_buffer.data[7],
-	my_data_buffer.data[8]
-	);
+	// if we decide the meshlet belongs in the region we will write out to thatstorage buffer 
 
-	vec3 points[3];
-	points[0] = v1;
-	points[1] = v2;
-	points[2] = v3;
-
-	////use the x value offset by 3s so that we can store the results in a flat array
-	//// try making small triangle centered on the corners of each existing one
-
-	//float side_size = .05;
-	//pos_data.data[gl_GlobalInvocationID.x] = gl_GlobalInvocationID.x/10.0;	
-	
-	// optional to have each invocation write out 9 coordinates so we've basically made 1 new triangle each invocation
-
-
-	// calculate off of the idx
-	// out corner (so the part of the subdivided triangle)
-	
-	uint ocornerId = gl_GlobalInvocationID.x%3;
-	// in corner
-	int icornerId = int(gl_GlobalInvocationID.x)/3;
-
-	vec3 mid;
-	if (ocornerId ==0) {
-		mid = points[icornerId];
-	}
-	if (gl_GlobalInvocationID.x ==1) {
-	// split difference to v2
-	mid = (v1+v2)/2;
-	}
-	if (gl_GlobalInvocationID.x ==2) {
-	mid = (v1+v3)/2;
-
-	}
-	if (gl_GlobalInvocationID.x ==4) {
-	mid = (v2+v3)/2;
-
-	}
-	if (gl_GlobalInvocationID.x ==5) {
-	mid = (v2 +v1)/2;
-	}
-	if (gl_GlobalInvocationID.x ==7) {
-	mid = (v3+v1)/2;
-
-	}
-	if (gl_GlobalInvocationID.x ==8) {
-	mid = (v3 + v2)/2;
-	}
-	pos_data.data[gl_GlobalInvocationID.x*3 ] = mid.x;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 1] = mid.y;
-	pos_data.data[gl_GlobalInvocationID.x*3 + 2] = mid.z;
-	// update the invocation buffer
-	inv_data.data[gl_GlobalInvocationID.x] = int(gl_GlobalInvocationID.x);
+	// use index and vertex buffer to construct 
 
 }
